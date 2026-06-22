@@ -1,0 +1,8 @@
+# Reference design screenshots — not part of the site
+Screenshot*.png
+*.png
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
