@@ -12,8 +12,8 @@ jobs:
       - name: Check open PRs and send email
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GMAIL_USER: ${{ secrets.GMAIL_USER }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GMAILUSER: ${{ secrets.GMAILUSER }}
+          GMAILAPPPASSWORD: ${{ secrets.GMAILAPPPASSWORD }}
         run: |
           # Fetch open PRs via GitHub API
           PR_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
@@ -52,8 +52,8 @@ jobs:
           import smtplib, os
           from email.mime.text import MIMEText
 
-          sender   = os.environ['GMAIL_USER']
-          password = os.environ['GMAIL_APP_PASSWORD']
+          sender   = os.environ['GMAILUSER']
+          password = os.environ['GMAILAPPPASSWORD']
           recipient = 'suphawit2244@hotmail.com'
           subject  = f"[RYUOLOGY] {os.environ.get('PR_COUNT','?')} PR(s) รอรีวิว"
 
