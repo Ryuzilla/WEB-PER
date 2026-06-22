@@ -10,16 +10,24 @@
 
 ## Services
 
-- [Services overview](https://cited.studio/#pillars): SEO, AEO and GEO explained.
-- [Method](https://cited.studio/#process): 4 phases — Audit, Structure, Optimize, Monitor.
-- [FAQ](https://cited.studio/#faq): Machine-readable answers about GEO, AEO and citation tracking.
+- [Services overview](https://ryuology.studio/#pillars): SEO, AEO and GEO explained.
+- [Method](https://ryuology.studio/#process): 4 phases — Audit, Structure, Optimize, Monitor.
+- [FAQ](https://ryuology.studio/#faq): Machine-readable answers about GEO, AEO and citation tracking.
+
+## The Journal (Lifestyle Blog)
+
+RYUOLOGY publishes a lifestyle blog called "The Journal" covering food, travel, health, and style.
+
+- [The Journal](https://ryuology.studio/blog/): Lifestyle content — Food, Travel, Health, Style.
+- [Morning Routine That Changed Everything](https://ryuology.studio/blog/post.html): How a simple 5-step morning routine improves focus, energy and daily direction. Category: Health.
 
 ## Key facts
 
 - Founded: 2024. Location: Bangkok, Thailand. Serves clients worldwide.
 - Engines optimized for: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot, Claude, Grok, Google, Bing.
-- Contact: hello@cited.studio
+- Blog topics: Food, Travel, Health, Style (Thai-language lifestyle content).
+- Contact: hello@ryuology.studio
 
 ## Contact
 
-- Email: hello@cited.studio
+- Email: hello@ryuology.studio
