@@ -1,4 +1,4 @@
-# CITED — robots.txt
+# RYUOLOGY — robots.txt
 # We explicitly welcome AI crawlers so our content can be cited.
 
 User-agent: *

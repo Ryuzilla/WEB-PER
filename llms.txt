@@ -1,6 +1,6 @@
-# CITED
+# RYUOLOGY
 
-> CITED is a generative-engine optimization (GEO) studio based in Bangkok. We structure brands so AI answer engines — ChatGPT, Perplexity, Google Gemini & AI Overviews, Microsoft Copilot, Claude and Grok — cite them as the source inside generated answers. We combine three layers: SEO (foundation), AEO (structure) and GEO (retrieval).
+> RYUOLOGY is a generative-engine optimization (GEO) studio based in Bangkok. We structure brands so AI answer engines — ChatGPT, Perplexity, Google Gemini & AI Overviews, Microsoft Copilot, Claude and Grok — cite them as the source inside generated answers. We combine three layers: SEO (foundation), AEO (structure) and GEO (retrieval).
 
 ## Definitions
 
