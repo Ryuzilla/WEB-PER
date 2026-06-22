@@ -1,0 +1,25 @@
+# CITED
+
+> CITED is a generative-engine optimization (GEO) studio based in Bangkok. We structure brands so AI answer engines — ChatGPT, Perplexity, Google Gemini & AI Overviews, Microsoft Copilot, Claude and Grok — cite them as the source inside generated answers. We combine three layers: SEO (foundation), AEO (structure) and GEO (retrieval).
+
+## Definitions
+
+- **GEO (Generative Engine Optimization):** Structuring content and data so generative AI models retrieve, trust and cite a brand inside their generated answers.
+- **AEO (Answer Engine Optimization):** Optimizing content to be the single best answer — targeting featured snippets, voice answers and Google AI Overviews via Q&A structure and FAQ schema.
+- **SEO (Search Engine Optimization):** Technical and content optimization for organic ranking on Google and Bing, which still feed the models.
+
+## Services
+
+- [Services overview](https://cited.studio/#pillars): SEO, AEO and GEO explained.
+- [Method](https://cited.studio/#process): 4 phases — Audit, Structure, Optimize, Monitor.
+- [FAQ](https://cited.studio/#faq): Machine-readable answers about GEO, AEO and citation tracking.
+
+## Key facts
+
+- Founded: 2024. Location: Bangkok, Thailand. Serves clients worldwide.
+- Engines optimized for: ChatGPT, Perplexity, Gemini, AI Overviews, Copilot, Claude, Grok, Google, Bing.
+- Contact: hello@cited.studio
+
+## Contact
+
+- Email: hello@cited.studio
