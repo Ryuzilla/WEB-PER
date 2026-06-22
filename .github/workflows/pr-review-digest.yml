@@ -1,0 +1,73 @@
+name: Daily PR Review Digest
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 09:00 Bangkok (UTC+7)
+  workflow_dispatch:      # run manually anytime
+
+jobs:
+  pr-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check open PRs and send email
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: |
+          # Fetch open PRs via GitHub API
+          PR_JSON=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls?state=open&per_page=20")
+
+          PR_COUNT=$(echo "$PR_JSON" | jq 'length')
+
+          # Skip if no open PRs
+          if [ "$PR_COUNT" -eq 0 ]; then
+            echo "No open PRs — skipping email."
+            exit 0
+          fi
+
+          # Build email body
+          BODY="Daily PR Review Digest — $(TZ='Asia/Bangkok' date '+%d %b %Y %H:%M')\n\n"
+          BODY+="Open PRs in Ryuzilla/WEB-PER: $PR_COUNT\n"
+          BODY+="$(printf '=%.0s' {1..50})\n\n"
+
+          while IFS= read -r row; do
+            NUMBER=$(echo "$row" | jq -r '.number')
+            TITLE=$(echo "$row"  | jq -r '.title')
+            AUTHOR=$(echo "$row" | jq -r '.user.login')
+            CREATED=$(echo "$row" | jq -r '.created_at' | cut -c1-10)
+            URL=$(echo "$row"    | jq -r '.html_url')
+            BODY+="#$NUMBER  $TITLE\n"
+            BODY+="  Author : $AUTHOR\n"
+            BODY+="  Opened : $CREATED\n"
+            BODY+="  URL    : $URL\n\n"
+          done < <(echo "$PR_JSON" | jq -c '.[]')
+
+          BODY+="$(printf '=%.0s' {1..50})\n"
+          BODY+="Review them at: https://github.com/${{ github.repository }}/pulls"
+
+          # Send via Gmail SMTP using Python
+          python3 - <<PYEOF
+          import smtplib, os
+          from email.mime.text import MIMEText
+
+          sender   = os.environ['GMAIL_USER']
+          password = os.environ['GMAIL_APP_PASSWORD']
+          recipient = 'suphawit2244@hotmail.com'
+          subject  = f"[RYUOLOGY] {os.environ.get('PR_COUNT','?')} PR(s) รอรีวิว"
+
+          body = """$BODY"""
+
+          msg = MIMEText(body, 'plain', 'utf-8')
+          msg['Subject'] = subject
+          msg['From']    = sender
+          msg['To']      = recipient
+
+          with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+              smtp.login(sender, password)
+              smtp.sendmail(sender, recipient, msg.as_string())
+
+          print(f"Email sent to {recipient}")
+          PYEOF
+        shell: bash
