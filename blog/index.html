@@ -99,7 +99,7 @@
       <a href="#style">Style</a>
       <a href="../index.html" class="active">Studio ↗</a>
     </div>
-    <a href="mailto:hello@cited.studio" class="nav-cta">Subscribe</a>
+    <a href="mailto:hello@ryuology.studio" class="nav-cta">Subscribe</a>
   </div>
 </nav>
 
@@ -317,7 +317,8 @@
       featured.closest('section').style.display = (matchFilter && matchSearch) ? '' : 'none';
     }
 
-    searchEmpty.hidden = visible > 0 || !!featured?.closest('section').style.display === false;
+    const featuredVisible = featured && featured.closest('section').style.display !== 'none';
+    searchEmpty.hidden = visible > 0 || featuredVisible;
     searchQuery.textContent = activeSearch;
     searchClear.style.display = activeSearch ? '' : 'none';
   }
