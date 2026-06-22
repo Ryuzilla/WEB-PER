@@ -112,6 +112,20 @@
   </div>
 </section>
 
+<!-- SEARCH BAR -->
+<div class="search-bar-wrap">
+  <div class="search-bar">
+    <span class="search-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </span>
+    <input type="search" id="search-input" placeholder="ค้นหาบทความ..." autocomplete="off" aria-label="ค้นหาบทความ">
+    <button class="search-clear" id="search-clear" aria-label="ล้างการค้นหา">✕</button>
+  </div>
+</div>
+
+<!-- NO RESULTS -->
+<p class="search-empty" id="search-empty" hidden>ไม่พบบทความที่ตรงกับ "<span id="search-query"></span>"</p>
+
 <!-- FILTER BAR -->
 <div class="filter-bar" id="filter-bar">
   <button class="filter-pill active" data-filter="all">All</button>
@@ -268,28 +282,70 @@
     nav.classList.toggle('scrolled', window.scrollY > 40);
   });
 
-  // Category filter
+  // State
   const pills = document.querySelectorAll('.filter-pill');
   const cards = document.querySelectorAll('.post-card[data-category]');
   const featured = document.querySelector('.featured-card[data-category]');
+  const searchInput = document.getElementById('search-input');
+  const searchClear = document.getElementById('search-clear');
+  const searchEmpty = document.getElementById('search-empty');
+  const searchQuery = document.getElementById('search-query');
 
+  let activeFilter = 'all';
+  let activeSearch = '';
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const title = card.querySelector('h3')?.textContent.toLowerCase() || '';
+      const excerpt = card.querySelector('.card-excerpt')?.textContent.toLowerCase() || '';
+      const cat = card.dataset.category;
+      const matchFilter = activeFilter === 'all' || cat === activeFilter;
+      const matchSearch = !activeSearch || title.includes(activeSearch) || excerpt.includes(activeSearch);
+      const show = matchFilter && matchSearch;
+      card.classList.toggle('hidden', !show);
+      if (show) visible++;
+    });
+
+    // featured post
+    if (featured) {
+      const title = featured.querySelector('h2')?.textContent.toLowerCase() || '';
+      const excerpt = featured.querySelector('p')?.textContent.toLowerCase() || '';
+      const cat = featured.dataset.category;
+      const matchFilter = activeFilter === 'all' || cat === activeFilter;
+      const matchSearch = !activeSearch || title.includes(activeSearch) || excerpt.includes(activeSearch);
+      featured.closest('section').style.display = (matchFilter && matchSearch) ? '' : 'none';
+    }
+
+    searchEmpty.hidden = visible > 0 || !!featured?.closest('section').style.display === false;
+    searchQuery.textContent = activeSearch;
+    searchClear.style.display = activeSearch ? '' : 'none';
+  }
+
+  // Category filter
   pills.forEach(pill => {
     pill.addEventListener('click', () => {
       pills.forEach(p => p.classList.remove('active'));
       pill.classList.add('active');
-      const filter = pill.dataset.filter;
-
-      cards.forEach(card => {
-        const show = filter === 'all' || card.dataset.category === filter;
-        card.classList.toggle('hidden', !show);
-      });
-
-      if (featured) {
-        const showFeatured = filter === 'all' || featured.dataset.category === filter;
-        featured.closest('section').style.display = showFeatured ? '' : 'none';
-      }
+      activeFilter = pill.dataset.filter;
+      applyFilters();
     });
   });
+
+  // Search
+  searchInput.addEventListener('input', () => {
+    activeSearch = searchInput.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  searchClear.addEventListener('click', () => {
+    searchInput.value = '';
+    activeSearch = '';
+    applyFilters();
+    searchInput.focus();
+  });
+
+  searchClear.style.display = 'none';
 
   // Scroll reveal
   const observer = new IntersectionObserver(entries => {
