@@ -1,4 +1,4 @@
-# CITED — GEO / AEO / SEO Studio
+# RYUOLOGY — GEO / AEO / SEO Studio
 
 A single-page site for a fictional **generative-engine optimization** studio, built so AI answer engines (ChatGPT, Perplexity, Gemini, Google AI Overviews, Claude) can read and **cite** its content.
 
@@ -29,4 +29,4 @@ Open `index.html` in any browser.
 
 ---
 
-© 2026 CITED Studio
+© 2026 RYUOLOGY Studio
