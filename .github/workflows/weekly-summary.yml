@@ -1,0 +1,93 @@
+name: Weekly Dev Summary
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # 09:00 Bangkok every Monday (UTC+7)
+  workflow_dispatch:
+
+jobs:
+  weekly-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and send weekly summary
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GMAILUSER: ${{ secrets.GMAILUSER }}
+          GMAILAPPPASSWORD: ${{ secrets.GMAILAPPPASSWORD }}
+        run: |
+          REPO="Ryuzilla/WEB-PER"
+          SINCE=$(TZ='Asia/Bangkok' date -d '7 days ago' '+%Y-%m-%dT00:00:00Z')
+          NOW=$(TZ='Asia/Bangkok' date '+%d %b %Y')
+
+          # Commits this week
+          COMMITS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/commits?since=$SINCE&per_page=50")
+          COMMIT_COUNT=$(echo "$COMMITS" | jq 'length')
+
+          # PRs merged this week
+          PRS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/pulls?state=closed&per_page=20&sort=updated&direction=desc")
+          MERGED_PRS=$(echo "$PRS" | jq "[.[] | select(.merged_at != null and .merged_at >= \"$SINCE\")]")
+          MERGED_COUNT=$(echo "$MERGED_PRS" | jq 'length')
+
+          # Open PRs
+          OPEN_PRS=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/$REPO/pulls?state=open&per_page=20")
+          OPEN_COUNT=$(echo "$OPEN_PRS" | jq 'length')
+
+          # Build email
+          python3 - <<PYEOF
+          import smtplib, os, json, subprocess
+          from email.mime.text import MIMEText
+
+          sender    = os.environ['GMAILUSER']
+          password  = os.environ['GMAILAPPPASSWORD']
+          recipient = 'suphawit2244@hotmail.com'
+          now       = "$NOW"
+          commits   = int("$COMMIT_COUNT")
+          merged    = int("$MERGED_COUNT")
+          open_prs  = int("$OPEN_COUNT")
+
+          merged_prs_raw  = json.loads("""$MERGED_PRS""")
+          open_prs_raw    = json.loads(os.popen('curl -s -H "Authorization: Bearer $GH_TOKEN" "https://api.github.com/repos/Ryuzilla/WEB-PER/pulls?state=open&per_page=20"').read())
+          commits_raw     = json.loads("""$COMMITS""")
+
+          lines = []
+          lines.append(f"RYUOLOGY Weekly Dev Summary — สัปดาห์สิ้นสุด {now}")
+          lines.append("=" * 55)
+          lines.append(f"  Commits    : {commits}")
+          lines.append(f"  PRs merged : {merged}")
+          lines.append(f"  PRs open   : {open_prs}")
+          lines.append("=" * 55)
+
+          if merged_prs_raw:
+              lines.append("\nPRs ที่ merge แล้วสัปดาห์นี้:")
+              for pr in merged_prs_raw[:10]:
+                  lines.append(f"  ✓ #{pr['number']} {pr['title']}")
+
+          if open_prs_raw:
+              lines.append("\nPRs ที่ยังค้างอยู่:")
+              for pr in open_prs_raw[:10]:
+                  lines.append(f"  · #{pr['number']} {pr['title']} ({pr['user']['login']})")
+
+          if commits_raw:
+              lines.append("\nCommits ล่าสุด 5 อัน:")
+              for c in commits_raw[:5]:
+                  msg = c['commit']['message'].split('\n')[0][:60]
+                  lines.append(f"  · {msg}")
+
+          lines.append(f"\nhttps://github.com/Ryuzilla/WEB-PER")
+
+          body = "\n".join(lines)
+          msg = MIMEText(body, 'plain', 'utf-8')
+          msg['Subject'] = f"[RYUOLOGY] Weekly Summary — {now}"
+          msg['From']    = sender
+          msg['To']      = recipient
+
+          with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+              smtp.login(sender, password)
+              smtp.sendmail(sender, recipient, msg.as_string())
+
+          print("Weekly summary sent.")
+          PYEOF
+        shell: bash
