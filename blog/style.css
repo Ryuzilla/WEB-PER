@@ -81,6 +81,28 @@ img { display: block; width: 100%; }
 }
 .nav-cta:hover { opacity: .85; transform: translateY(-1px); }
 
+/* Search button in nav */
+.nav-search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 100px;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  transition: color .2s, background .2s, border-color .2s;
+  margin-left: .5rem;
+  flex-shrink: 0;
+}
+.nav-search-btn:hover,
+.nav-search-btn.active {
+  color: var(--fg);
+  background: var(--surface-2);
+  border-color: var(--border);
+}
+
 /* ── HERO ── */
 .blog-hero {
   padding: 140px 2rem 80px;
