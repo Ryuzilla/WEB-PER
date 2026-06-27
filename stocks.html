@@ -326,6 +326,8 @@
         {"description": "BTC/USD", "proName": "BITSTAMP:BTCUSD"},
         {"description": "ETH/USD", "proName": "BITSTAMP:ETHUSD"},
         {"description": "Gold", "proName": "TVC:GOLD"},
+        {"description": "Silver", "proName": "TVC:SILVER"},
+        {"description": "Gold Futures", "proName": "COMEX:GC1!"},
         {"description": "Oil", "proName": "TVC:USOIL"},
         {"description": "USD/THB", "proName": "FX:USDTHB"}
       ],
@@ -377,7 +379,13 @@
   <div class="symbol-group">
     <span class="symbol-group-label">FX</span>
     <button class="symbol-pill" data-symbol="FX:USDTHB">USD/THB</button>
-    <button class="symbol-pill" data-symbol="TVC:GOLD">GOLD</button>
+  </div>
+  <div class="symbol-group">
+    <span class="symbol-group-label">GOLD</span>
+    <button class="symbol-pill" data-symbol="TVC:GOLD">XAU/USD</button>
+    <button class="symbol-pill" data-symbol="TVC:SILVER">XAG/USD</button>
+    <button class="symbol-pill" data-symbol="COMEX:GC1!">Gold Futures</button>
+    <button class="symbol-pill" data-symbol="CAPITALCOM:XAUTHB">XAU/THB</button>
   </div>
 </div>
 
@@ -486,6 +494,59 @@
                 {"s": "BINANCE:XRPUSDT", "d": "XRP"}
               ],
               "originalTitle": "Crypto"
+            }
+          ]
+        }
+        </script>
+      </div>
+    </div>
+
+    <!-- Gold & Commodities -->
+    <div class="market-card" style="grid-column: 1 / -1;">
+      <p class="market-card-title">Gold & Commodities</p>
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "dark",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "th_TH",
+          "isTransparent": true,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": false,
+          "width": "100%",
+          "height": "400",
+          "plotLineColorGrowing": "#D6FF3F",
+          "plotLineColorFalling": "#ff4444",
+          "gridLineColor": "rgba(244,244,238,0.06)",
+          "scaleFontColor": "rgba(140,140,132,1)",
+          "belowLineFillColorGrowing": "rgba(214,255,63,0.08)",
+          "belowLineFillColorFalling": "rgba(255,68,68,0.08)",
+          "belowLineFillColorGrowingBottom": "rgba(214,255,63,0)",
+          "belowLineFillColorFallingBottom": "rgba(255,68,68,0)",
+          "symbolActiveColor": "rgba(214,255,63,0.12)",
+          "tabs": [
+            {
+              "title": "Gold & Metals",
+              "symbols": [
+                {"s": "TVC:GOLD", "d": "Gold (XAU/USD)"},
+                {"s": "COMEX:GC1!", "d": "Gold Futures"},
+                {"s": "TVC:SILVER", "d": "Silver (XAG/USD)"},
+                {"s": "CAPITALCOM:XAUTHB", "d": "Gold/THB"},
+                {"s": "TVC:PLATINUM", "d": "Platinum"}
+              ],
+              "originalTitle": "Gold & Metals"
+            },
+            {
+              "title": "Commodities",
+              "symbols": [
+                {"s": "TVC:USOIL", "d": "Crude Oil WTI"},
+                {"s": "TVC:UKOIL", "d": "Crude Oil Brent"},
+                {"s": "CBOT:ZC1!", "d": "Corn Futures"},
+                {"s": "CBOT:ZW1!", "d": "Wheat Futures"}
+              ],
+              "originalTitle": "Commodities"
             }
           ]
         }
