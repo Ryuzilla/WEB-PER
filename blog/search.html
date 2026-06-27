@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ค้นหา — The Journal by RYUOLOGY</title>
+  <meta name="description" content="ค้นหาบทความ lifestyle จาก RYUOLOGY Journal">
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="alternate" type="text/plain" title="LLMs.txt" href="/llms.txt">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Search page specific ── */
+    .search-page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 120px 24px 80px;
+    }
+    .search-page-header {
+      margin-bottom: 40px;
+    }
+    .search-page-header h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .search-page-header p {
+      color: var(--muted);
+      font-size: 14px;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* Search input */
+    .search-page-input-wrap {
+      position: relative;
+      margin-bottom: 48px;
+    }
+    .search-page-input-wrap .si-icon {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+    }
+    .search-page-input {
+      width: 100%;
+      background: rgba(244,244,238,.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 52px 18px 52px;
+      color: var(--fg);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+      box-sizing: border-box;
+    }
+    .search-page-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(214,255,63,.12);
+    }
+    .search-page-input::placeholder { color: var(--muted); }
+    .si-clear {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: none;
+      transition: color .15s;
+    }
+    .si-clear:hover { color: var(--fg); }
+
+    /* Results */
+    .search-results-meta {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .search-results-meta strong { color: var(--accent); }
+
+    .search-result-item {
+      display: flex;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+      transition: opacity .2s;
+    }
+    .search-result-item:first-child { border-top: 1px solid var(--border); }
+    .search-result-item:hover { opacity: .75; }
+
+    .sri-cat {
+      flex-shrink: 0;
+      width: 70px;
+      padding-top: 3px;
+    }
+    .sri-body { flex: 1; }
+    .sri-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .sri-title mark {
+      background: rgba(214,255,63,.25);
+      color: var(--fg);
+      border-radius: 3px;
+      padding: 0 2px;
+    }
+    .sri-excerpt {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .sri-meta {
+      display: flex;
+      gap: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* Empty state */
+    .search-empty-state {
+      text-align: center;
+      padding: 80px 0;
+      display: none;
+    }
+    .search-empty-state.show { display: block; }
+    .search-empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: .4;
+    }
+    .search-empty-state h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .search-empty-state p { color: var(--muted); font-size: 14px; }
+
+    /* Initial state */
+    .search-initial {
+      text-align: center;
+      padding: 60px 0;
+    }
+    .search-initial p { color: var(--muted); font-size: 15px; }
+
+    /* Category pill colors in results */
+    .sri-cat .category-tag { display: inline-block; margin-top: 2px; }
+
+    @media (max-width: 600px) {
+      .sri-cat { display: none; }
+      .search-page { padding-top: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav" aria-label="Primary navigation">
+  <div class="nav-inner">
+    <a href="../index.html" class="nav-logo">RYUOLOGY<span>/</span>JOURNAL</a>
+    <div class="nav-links">
+      <a href="index.html">← Back to Journal</a>
+      <a href="index.html#health">Health</a>
+      <a href="index.html#food">Food</a>
+      <a href="index.html#travel">Travel</a>
+      <a href="index.html#style">Style</a>
+    </div>
+    <a href="search.html" class="nav-search-btn active" aria-label="ค้นหา">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- SEARCH PAGE -->
+<main class="search-page">
+  <div class="search-page-header">
+    <h1>ค้นหาบทความ</h1>
+    <p>RYUOLOGY JOURNAL · SEARCH</p>
+  </div>
+
+  <!-- Input -->
+  <div class="search-page-input-wrap">
+    <span class="si-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </span>
+    <input
+      type="search"
+      id="si"
+      class="search-page-input"
+      placeholder="พิมพ์คำที่ต้องการค้นหา..."
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+      aria-label="ค้นหาบทความ"
+    >
+    <button class="si-clear" id="si-clear" aria-label="ล้าง">✕</button>
+  </div>
+
+  <!-- Results meta -->
+  <p class="search-results-meta" id="results-meta" hidden></p>
+
+  <!-- Results list -->
+  <div id="results-list"></div>
+
+  <!-- Empty state -->
+  <div class="search-empty-state" id="empty-state">
+    <div class="search-empty-icon">🔍</div>
+    <h3>ไม่พบบทความที่ตรงกัน</h3>
+    <p>ลองค้นหาด้วยคำอื่น หรือเรียกดูทุกหมวดหมู่ได้ที่ <a href="index.html" style="color:var(--accent)">The Journal</a></p>
+  </div>
+
+  <!-- Initial state -->
+  <div class="search-initial" id="initial-state">
+    <p>พิมพ์คำค้นหาด้านบนเพื่อค้นหาบทความ lifestyle จาก RYUOLOGY Journal</p>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">RYUOLOGY<span>/</span>JOURNAL</span>
+    <span class="footer-copy">© 2026 RYUOLOGY STUDIO · BANGKOK</span>
+  </div>
+</footer>
+
+<script src="search-index.js"></script>
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const input     = document.getElementById('si');
+  const clearBtn  = document.getElementById('si-clear');
+  const resMeta   = document.getElementById('results-meta');
+  const resList   = document.getElementById('results-list');
+  const emptyState   = document.getElementById('empty-state');
+  const initialState = document.getElementById('initial-state');
+
+  const CATEGORY_LABELS = { health: 'HEALTH', food: 'FOOD', travel: 'TRAVEL', style: 'STYLE' };
+
+  function highlight(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+  }
+
+  function score(post, terms) {
+    let s = 0;
+    terms.forEach(t => {
+      const titleHits = (post.title.toLowerCase().match(new RegExp(t, 'g')) || []).length;
+      const excerptHits = (post.excerpt.toLowerCase().match(new RegExp(t, 'g')) || []).length;
+      const bodyHits = (post.body.toLowerCase().match(new RegExp(t, 'g')) || []).length;
+      s += titleHits * 5 + excerptHits * 3 + bodyHits;
+    });
+    return s;
+  }
+
+  function doSearch(raw) {
+    const query = raw.trim().toLowerCase();
+    clearBtn.style.display = raw ? '' : 'none';
+
+    if (!query) {
+      resList.innerHTML = '';
+      resMeta.hidden = true;
+      emptyState.classList.remove('show');
+      initialState.style.display = '';
+      return;
+    }
+
+    initialState.style.display = 'none';
+    const terms = query.split(/\s+/).filter(Boolean);
+
+    const results = window.SEARCH_INDEX
+      .map(post => ({ post, s: score(post, terms) }))
+      .filter(({ s }) => s > 0)
+      .sort((a, b) => b.s - a.s)
+      .map(({ post }) => post);
+
+    if (!results.length) {
+      resList.innerHTML = '';
+      resMeta.hidden = true;
+      emptyState.classList.add('show');
+      return;
+    }
+
+    emptyState.classList.remove('show');
+    resMeta.hidden = false;
+    resMeta.innerHTML = `พบ <strong>${results.length}</strong> บทความสำหรับ "<strong>${raw.trim()}</strong>"`;
+
+    resList.innerHTML = results.map(post => `
+      <a href="${post.url}" class="search-result-item">
+        <div class="sri-cat">
+          <span class="category-tag">${CATEGORY_LABELS[post.category] || post.category.toUpperCase()}</span>
+        </div>
+        <div class="sri-body">
+          <div class="sri-title">${highlight(post.title, query)}</div>
+          <div class="sri-excerpt">${highlight(post.excerpt, query)}</div>
+          <div class="sri-meta">
+            <span>${post.date}</span>
+            <span>${post.readTime} read</span>
+          </div>
+        </div>
+      </a>
+    `).join('');
+  }
+
+  input.addEventListener('input', () => doSearch(input.value));
+  clearBtn.addEventListener('click', () => {
+    input.value = '';
+    doSearch('');
+    input.focus();
+  });
+
+  // Read ?q= from URL
+  const urlQ = new URLSearchParams(location.search).get('q') || '';
+  if (urlQ) {
+    input.value = urlQ;
+    doSearch(urlQ);
+  }
+
+  // Auto-focus
+  input.focus();
+</script>
+</body>
+</html>
