@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stock Charts — RYUOLOGY</title>
+  <meta name="description" content="ติดตามกราฟหุ้นแบบ real-time ทั้งหุ้นไทย หุ้นต่างประเทศ และ crypto โดย RYUOLOGY">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="google-site-verification" content="c9602d9a7d463cfb">
+  <meta name="google-site-verification" content="1cac7b5e1b12e038">
+
+  <!-- OG -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Stock Charts — RYUOLOGY">
+  <meta property="og:description" content="ติดตามกราฟหุ้นแบบ real-time ทั้งหุ้นไทย หุ้นต่างประเทศ และ crypto">
+  <meta property="og:url" content="https://ryuzilla.github.io/WEB-PER/stocks.html">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --surface: #111110;
+      --surface-2: #161614;
+      --fg: #F4F4EE;
+      --muted: #8C8C84;
+      --accent: #D6FF3F;
+      --accent-ink: #0A0A0A;
+      --border: rgba(244,244,238,0.12);
+      --maxw: 1280px;
+      --ease: cubic-bezier(.22,.61,.36,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* NAV */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 0 2rem;
+      transition: background .3s var(--ease), border-color .3s;
+      border-bottom: 1px solid transparent;
+    }
+    .nav.scrolled {
+      background: rgba(10,10,10,.9);
+      backdrop-filter: blur(12px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      gap: 16px;
+    }
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: .9rem;
+      letter-spacing: .08em;
+      flex-shrink: 0;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+    }
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .05em;
+      padding: .45rem .9rem;
+      border-radius: 100px;
+      color: var(--muted);
+      transition: color .2s, background .2s;
+    }
+    .nav-links a:hover,
+    .nav-links a.active { color: var(--fg); background: var(--surface-2); }
+    .nav-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      padding: .55rem 1.2rem;
+      border-radius: 100px;
+      background: var(--accent);
+      color: var(--accent-ink);
+      transition: opacity .2s, transform .2s;
+      flex-shrink: 0;
+    }
+    .nav-cta:hover { opacity: .85; transform: translateY(-1px); }
+
+    /* TICKER TAPE */
+    .ticker-wrap {
+      margin-top: 64px;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    /* HERO */
+    .stocks-hero {
+      padding: 56px 2rem 40px;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .stocks-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 64px 64px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 30%, transparent 100%);
+      pointer-events: none;
+    }
+    .stocks-hero-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .stocks-hero-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .15em;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+    .stocks-hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -.03em;
+    }
+    .stocks-hero p {
+      color: var(--muted);
+      margin-top: .75rem;
+      font-size: .95rem;
+      max-width: 480px;
+    }
+
+    /* SYMBOL PILLS */
+    .symbol-bar {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 20px 2rem;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .symbol-pill {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color .2s, background .2s, border-color .2s;
+    }
+    .symbol-pill:hover { color: var(--fg); border-color: var(--border-strong, rgba(244,244,238,.28)); }
+    .symbol-pill.active {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+    }
+    .symbol-group {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+    .symbol-group-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      padding: 0 8px;
+    }
+
+    /* MAIN CHART */
+    .chart-section {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 32px 2rem;
+    }
+    .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      color: var(--muted);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .chart-wrap {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    /* MARKET OVERVIEW */
+    .market-section {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 2rem 32px;
+    }
+    .market-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .market-card {
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+    .market-card-title {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .1em;
+      color: var(--muted);
+      padding: 16px 20px 0;
+      text-transform: uppercase;
+    }
+
+    /* HEATMAP SECTION */
+    .heatmap-section {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 2rem 32px;
+    }
+
+    /* FOOTER */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 2rem;
+    }
+    .footer-inner {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: 'Space Mono', monospace;
+      font-weight: 700;
+      font-size: .85rem;
+      letter-spacing: .08em;
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-copy {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+    .footer-disclaimer {
+      width: 100%;
+      font-size: .75rem;
+      color: var(--muted);
+      opacity: .6;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .market-grid { grid-template-columns: 1fr; }
+      .stocks-hero-inner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">RYUOLOGY<span>/</span>STOCKS</a>
+    <div class="nav-links">
+      <a href="index.html">Studio</a>
+      <a href="blog/index.html">Journal</a>
+      <a href="stocks.html" class="active">Stocks</a>
+    </div>
+    <a href="blog/index.html" class="nav-cta">Journal ↗</a>
+  </div>
+</nav>
+
+<!-- TICKER TAPE -->
+<div class="ticker-wrap">
+  <div class="tradingview-widget-container">
+    <div class="tradingview-widget-container__widget"></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+    {
+      "symbols": [
+        {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"},
+        {"proName": "FOREXCOM:NSXUSD", "title": "Nasdaq 100"},
+        {"description": "SET Index", "proName": "SET:SET"},
+        {"description": "Apple", "proName": "NASDAQ:AAPL"},
+        {"description": "NVDIA", "proName": "NASDAQ:NVDA"},
+        {"description": "Tesla", "proName": "NASDAQ:TSLA"},
+        {"description": "BTC/USD", "proName": "BITSTAMP:BTCUSD"},
+        {"description": "ETH/USD", "proName": "BITSTAMP:ETHUSD"},
+        {"description": "Gold", "proName": "TVC:GOLD"},
+        {"description": "Oil", "proName": "TVC:USOIL"},
+        {"description": "USD/THB", "proName": "FX:USDTHB"}
+      ],
+      "showSymbolLogo": true,
+      "isTransparent": true,
+      "displayMode": "adaptive",
+      "colorTheme": "dark",
+      "locale": "th_TH"
+    }
+    </script>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="stocks-hero">
+  <div class="stocks-hero-inner">
+    <div>
+      <p class="stocks-hero-label">RYUOLOGY · MARKET DATA</p>
+      <h1>Stock Charts</h1>
+      <p>กราฟหุ้น real-time ทั้งหุ้นไทย หุ้นต่างประเทศ และ crypto</p>
+    </div>
+  </div>
+</section>
+
+<!-- SYMBOL QUICK PICK -->
+<div class="symbol-bar" id="symbol-bar">
+  <div class="symbol-group">
+    <span class="symbol-group-label">TH</span>
+    <button class="symbol-pill" data-symbol="SET:SET">SET</button>
+    <button class="symbol-pill" data-symbol="SET:PTT">PTT</button>
+    <button class="symbol-pill" data-symbol="SET:CPALL">CPALL</button>
+    <button class="symbol-pill" data-symbol="SET:SCB">SCB</button>
+    <button class="symbol-pill" data-symbol="SET:AOT">AOT</button>
+  </div>
+  <div class="symbol-group">
+    <span class="symbol-group-label">US</span>
+    <button class="symbol-pill active" data-symbol="NASDAQ:AAPL">AAPL</button>
+    <button class="symbol-pill" data-symbol="NASDAQ:NVDA">NVDA</button>
+    <button class="symbol-pill" data-symbol="NASDAQ:TSLA">TSLA</button>
+    <button class="symbol-pill" data-symbol="NASDAQ:MSFT">MSFT</button>
+    <button class="symbol-pill" data-symbol="NYSE:AMZN">AMZN</button>
+  </div>
+  <div class="symbol-group">
+    <span class="symbol-group-label">CRYPTO</span>
+    <button class="symbol-pill" data-symbol="BITSTAMP:BTCUSD">BTC</button>
+    <button class="symbol-pill" data-symbol="BITSTAMP:ETHUSD">ETH</button>
+    <button class="symbol-pill" data-symbol="BINANCE:SOLUSDT">SOL</button>
+  </div>
+  <div class="symbol-group">
+    <span class="symbol-group-label">FX</span>
+    <button class="symbol-pill" data-symbol="FX:USDTHB">USD/THB</button>
+    <button class="symbol-pill" data-symbol="TVC:GOLD">GOLD</button>
+  </div>
+</div>
+
+<!-- MAIN CHART -->
+<div class="chart-section">
+  <p class="section-label">ADVANCED CHART</p>
+  <div class="chart-wrap">
+    <div class="tradingview-widget-container" id="chart-container">
+      <div id="tradingview-chart"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/tv.js" async onload="initChart()"></script>
+    </div>
+  </div>
+</div>
+
+<!-- MARKET OVERVIEW -->
+<div class="market-section">
+  <p class="section-label">MARKET OVERVIEW</p>
+  <div class="market-grid">
+
+    <!-- US Market -->
+    <div class="market-card">
+      <p class="market-card-title">US Market</p>
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "dark",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "th_TH",
+          "isTransparent": true,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": false,
+          "width": "100%",
+          "height": "400",
+          "plotLineColorGrowing": "#D6FF3F",
+          "plotLineColorFalling": "#ff4444",
+          "gridLineColor": "rgba(244,244,238,0.06)",
+          "scaleFontColor": "rgba(140,140,132,1)",
+          "belowLineFillColorGrowing": "rgba(214,255,63,0.08)",
+          "belowLineFillColorFalling": "rgba(255,68,68,0.08)",
+          "belowLineFillColorGrowingBottom": "rgba(214,255,63,0)",
+          "belowLineFillColorFallingBottom": "rgba(255,68,68,0)",
+          "symbolActiveColor": "rgba(214,255,63,0.12)",
+          "tabs": [
+            {
+              "title": "Indices",
+              "symbols": [
+                {"s": "FOREXCOM:SPXUSD", "d": "S&P 500"},
+                {"s": "FOREXCOM:NSXUSD", "d": "Nasdaq 100"},
+                {"s": "FOREXCOM:DJI", "d": "Dow Jones"},
+                {"s": "INDEX:RTY", "d": "Russell 2000"}
+              ],
+              "originalTitle": "Indices"
+            },
+            {
+              "title": "Tech",
+              "symbols": [
+                {"s": "NASDAQ:AAPL"},
+                {"s": "NASDAQ:NVDA"},
+                {"s": "NASDAQ:MSFT"},
+                {"s": "NASDAQ:TSLA"},
+                {"s": "NYSE:AMZN"},
+                {"s": "NASDAQ:META"}
+              ]
+            }
+          ]
+        }
+        </script>
+      </div>
+    </div>
+
+    <!-- Crypto -->
+    <div class="market-card">
+      <p class="market-card-title">Crypto</p>
+      <div class="tradingview-widget-container">
+        <div class="tradingview-widget-container__widget"></div>
+        <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        {
+          "colorTheme": "dark",
+          "dateRange": "1D",
+          "showChart": true,
+          "locale": "th_TH",
+          "isTransparent": true,
+          "showSymbolLogo": true,
+          "showFloatingTooltip": false,
+          "width": "100%",
+          "height": "400",
+          "plotLineColorGrowing": "#D6FF3F",
+          "plotLineColorFalling": "#ff4444",
+          "gridLineColor": "rgba(244,244,238,0.06)",
+          "scaleFontColor": "rgba(140,140,132,1)",
+          "belowLineFillColorGrowing": "rgba(214,255,63,0.08)",
+          "belowLineFillColorFalling": "rgba(255,68,68,0.08)",
+          "belowLineFillColorGrowingBottom": "rgba(214,255,63,0)",
+          "belowLineFillColorFallingBottom": "rgba(255,68,68,0)",
+          "symbolActiveColor": "rgba(214,255,63,0.12)",
+          "tabs": [
+            {
+              "title": "Crypto",
+              "symbols": [
+                {"s": "BITSTAMP:BTCUSD", "d": "Bitcoin"},
+                {"s": "BITSTAMP:ETHUSD", "d": "Ethereum"},
+                {"s": "BINANCE:SOLUSDT", "d": "Solana"},
+                {"s": "BINANCE:BNBUSDT", "d": "BNB"},
+                {"s": "BINANCE:XRPUSDT", "d": "XRP"}
+              ],
+              "originalTitle": "Crypto"
+            }
+          ]
+        }
+        </script>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- HEATMAP -->
+<div class="heatmap-section">
+  <p class="section-label">S&P 500 HEATMAP</p>
+  <div class="chart-wrap">
+    <div class="tradingview-widget-container">
+      <div class="tradingview-widget-container__widget"></div>
+      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-stock-heatmap.js" async>
+      {
+        "exchanges": [],
+        "dataSource": "SPX500",
+        "grouping": "sector",
+        "blockSize": "market_cap_basic",
+        "blockColor": "change",
+        "locale": "th_TH",
+        "symbolUrl": "",
+        "colorTheme": "dark",
+        "hasTopBar": false,
+        "isDataSetEnabled": false,
+        "isZoomEnabled": true,
+        "hasSymbolTooltip": true,
+        "isMonoSize": false,
+        "width": "100%",
+        "height": "500"
+      }
+      </script>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">RYUOLOGY<span>/</span>STOCKS</span>
+    <span class="footer-copy">© 2026 RYUOLOGY STUDIO · BANGKOK</span>
+    <p class="footer-disclaimer">ข้อมูลราคาหุ้นและกราฟจาก TradingView · ไม่ใช่คำแนะนำการลงทุน</p>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // TradingView Advanced Chart
+  let widget;
+  function initChart() {
+    widget = new TradingView.widget({
+      autosize: true,
+      symbol: 'NASDAQ:AAPL',
+      interval: 'D',
+      timezone: 'Asia/Bangkok',
+      theme: 'dark',
+      style: '1',
+      locale: 'th_TH',
+      toolbar_bg: '#111110',
+      enable_publishing: false,
+      allow_symbol_change: true,
+      container_id: 'tradingview-chart',
+      hide_top_toolbar: false,
+      hide_legend: false,
+      save_image: false,
+      height: 520,
+      backgroundColor: 'rgba(10,10,10,1)',
+      gridColor: 'rgba(244,244,238,0.06)',
+    });
+  }
+
+  // Symbol pills
+  document.getElementById('symbol-bar').addEventListener('click', e => {
+    const pill = e.target.closest('.symbol-pill');
+    if (!pill) return;
+    document.querySelectorAll('.symbol-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    const sym = pill.dataset.symbol;
+    if (widget) widget.setSymbol(sym, 'D', () => {});
+  });
+</script>
+</body>
+</html>
