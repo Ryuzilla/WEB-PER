@@ -112,37 +112,53 @@
 <!-- HERO -->
 <section class="blog-hero">
   <div class="blog-hero-inner reveal">
-    <p class="blog-hero-label">THE JOURNAL · LIFESTYLE CONTENT</p>
-    <h1>Life,<br><em>Curated</em>.</h1>
-    <p>บทความคัดสรรเรื่องชีวิตที่ดี อาหาร การเดินทาง สุขภาพ และสไตล์ที่คุณเป็น</p>
+    <div class="blog-hero-left">
+      <p class="blog-hero-label">THE JOURNAL · LIFESTYLE CONTENT</p>
+      <h1>Life,<br><em>Curated</em>.</h1>
+      <p class="blog-hero-sub">บทความคัดสรรเรื่องชีวิตที่ดี อาหาร การเดินทาง สุขภาพ และสไตล์ที่คุณเป็น</p>
+    </div>
+    <div class="blog-hero-stats">
+      <div class="blog-hero-stat">
+        <div class="blog-hero-stat-val">7</div>
+        <div class="blog-hero-stat-label">POSTS</div>
+      </div>
+      <div class="blog-hero-stat">
+        <div class="blog-hero-stat-val">4</div>
+        <div class="blog-hero-stat-label">TOPICS</div>
+      </div>
+      <div class="blog-hero-stat">
+        <div class="blog-hero-stat-val">2026</div>
+        <div class="blog-hero-stat-label">SINCE</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- SEARCH BAR -->
-<div class="search-bar-wrap">
-  <div class="search-bar">
-    <span class="search-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    </span>
-    <input type="search" id="search-input" placeholder="ค้นหาบทความ..." autocomplete="off" aria-label="ค้นหาบทความ">
-    <button class="search-clear" id="search-clear" aria-label="ล้างการค้นหา">✕</button>
+<!-- STICKY FILTER + SEARCH BAR -->
+<div class="journal-bar">
+  <div class="journal-bar-inner">
+    <button class="filter-pill active" data-filter="all" id="filter-bar">All</button>
+    <button class="filter-pill" data-filter="food">Food</button>
+    <button class="filter-pill" data-filter="travel">Travel</button>
+    <button class="filter-pill" data-filter="health">Health</button>
+    <button class="filter-pill" data-filter="style">Style</button>
+    <span class="bar-divider"></span>
+    <div class="bar-search-wrap">
+      <span class="bar-search-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </span>
+      <input type="search" id="search-input" class="bar-search-input" placeholder="ค้นหา..." autocomplete="off" aria-label="ค้นหาบทความ">
+      <button class="bar-search-clear" id="search-clear" aria-label="ล้าง">✕</button>
+    </div>
   </div>
 </div>
 
 <!-- NO RESULTS -->
 <p class="search-empty" id="search-empty" hidden>ไม่พบบทความที่ตรงกับ "<span id="search-query"></span>"</p>
 
-<!-- FILTER BAR -->
-<div class="filter-bar" id="filter-bar">
-  <button class="filter-pill active" data-filter="all">All</button>
-  <button class="filter-pill" data-filter="food">Food</button>
-  <button class="filter-pill" data-filter="travel">Travel</button>
-  <button class="filter-pill" data-filter="health">Health</button>
-  <button class="filter-pill" data-filter="style">Style</button>
-</div>
-
 <!-- FEATURED POST -->
 <section class="featured-section reveal">
+  <p class="featured-label">FEATURED</p>
   <a href="post.html" class="featured-card" data-category="health">
     <div class="featured-img">
       <div class="img-placeholder">FEATURED · HEALTH</div>
@@ -165,7 +181,10 @@
 
 <!-- POSTS GRID -->
 <section class="posts-section">
-  <p class="section-label">LATEST POSTS</p>
+  <div class="section-header">
+    <span class="section-label">LATEST POSTS</span>
+    <span class="section-line"></span>
+  </div>
   <div class="posts-grid" id="posts-grid">
 
     <!-- Post 0 · Health (Morning Routine Advanced) -->
@@ -306,7 +325,7 @@
   });
 
   // State
-  const pills = document.querySelectorAll('.filter-pill');
+  const pills = document.querySelectorAll('.journal-bar .filter-pill');
   const cards = document.querySelectorAll('.post-card[data-category]');
   const featured = document.querySelector('.featured-card[data-category]');
   const searchInput = document.getElementById('search-input');
