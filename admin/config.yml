@@ -2,7 +2,7 @@ backend:
   name: github
   repo: ryuzilla/web-per
   branch: main
-  base_url: https://ryuology.studio
+  base_url: https://web-per.vercel.app
   auth_endpoint: /api/auth
 
 publish_mode: editorial_workflow
