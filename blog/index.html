@@ -362,7 +362,7 @@
     const featuredVisible = featured && featured.closest('section').style.display !== 'none';
     searchEmpty.hidden = visible > 0 || featuredVisible;
     searchQuery.textContent = activeSearch;
-    searchClear.style.display = activeSearch ? '' : 'none';
+    searchClear.style.display = activeSearch ? 'block' : 'none';
   }
 
   // Category filter
