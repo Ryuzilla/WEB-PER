@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ title }} — The Journal by RYUOLOGY</title>
+  <meta name="description" content="{{ excerpt }}">
+  <meta name="keywords" content="{{ tags | postTags | join(', ') }}">
+  <meta name="google-site-verification" content="c9602d9a7d463cfb">
+  <meta name="google-site-verification" content="1cac7b5e1b12e038">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="author" content="RYUOLOGY Journal">
+  <link rel="canonical" href="https://ryuology.studio{{ page.url }}">
+  <meta name="theme-color" content="#080809">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="RYUOLOGY Journal">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ excerpt }}">
+  <meta property="og:url" content="https://ryuology.studio{{ page.url }}">
+  <meta property="og:locale" content="th_TH">
+  <meta property="article:published_time" content="{{ date | isoDate }}">
+  <meta property="article:section" content="{{ category }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ excerpt }}">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BlogPosting",
+        "@id": "https://ryuology.studio{{ page.url }}#article",
+        "headline": {{ title | dump | safe }},
+        "description": {{ excerpt | dump | safe }},
+        "url": "https://ryuology.studio{{ page.url }}",
+        "datePublished": "{{ date | isoDate }}",
+        "dateModified": "{{ date | isoDate }}",
+        "inLanguage": "th",
+        "articleSection": "{{ category }}",
+        "keywords": [{% for tag in tags | postTags %}"{{ tag }}"{% if not loop.last %},{% endif %}{% endfor %}],
+        "timeRequired": "PT{{ readTime | replace(' min', '') }}M",
+        "author": {
+          "@type": "Organization",
+          "@id": "https://ryuology.studio/#org",
+          "name": "RYUOLOGY Studio"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "@id": "https://ryuology.studio/#org",
+          "name": "RYUOLOGY Studio",
+          "url": "https://ryuology.studio/"
+        },
+        "isPartOf": {
+          "@type": "Blog",
+          "@id": "https://ryuology.studio/blog/#blog",
+          "name": "The Journal by RYUOLOGY"
+        }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "RYUOLOGY", "item": "https://ryuology.studio/" },
+          { "@type": "ListItem", "position": 2, "name": "The Journal", "item": "https://ryuology.studio/blog/" },
+          { "@type": "ListItem", "position": 3, "name": {{ title | dump | safe }}, "item": "https://ryuology.studio{{ page.url }}" }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <link rel="alternate" type="text/plain" title="LLMs.txt" href="/llms.txt">
+  <link rel="stylesheet" href="/blog/style.css">
+</head>
+<body>
+
+<nav class="nav" id="nav" aria-label="Primary navigation">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">RYUOLOGY<span>/</span>JOURNAL</a>
+    <div class="nav-links">
+      <a href="/blog/">← Back to Journal</a>
+      <a href="/blog/?filter=food">Food</a>
+      <a href="/blog/?filter=travel">Travel</a>
+      <a href="/blog/?filter=health">Health</a>
+      <a href="/blog/?filter=style">Style</a>
+    </div>
+    <a href="mailto:hello@ryuology.studio" class="nav-cta">Subscribe</a>
+    <a href="/blog/search.html" class="nav-search-btn" aria-label="ค้นหา">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </a>
+  </div>
+</nav>
+
+<article class="post-wrap">
+
+  <header class="post-header reveal">
+    <span class="category-tag">{{ category | upper }}</span>
+    <h1>{{ title }}</h1>
+    <div class="post-meta">
+      <span>โดย The Journal Team</span>
+      <span>{{ date | thaiDate }}</span>
+      <span>{{ readTime }} read</span>
+    </div>
+  </header>
+
+  <div class="post-hero-img reveal">
+    <div class="img-placeholder">HERO IMAGE · 16:9</div>
+  </div>
+
+  <div class="post-body reveal">
+    {{ content | safe }}
+  </div>
+
+  {% if tags %}
+  <div class="post-tags reveal">
+    {% for tag in tags %}
+    <a href="/blog/" class="tag-chip">{{ tag }}</a>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+</article>
+
+{% set relatedPosts = collections.posts | relatedTo(page.url) %}
+{% if relatedPosts.length %}
+<section class="related-section">
+  <p class="section-label">RELATED POSTS</p>
+  <div class="related-grid">
+    {% for post in relatedPosts %}
+    <a href="{{ post.url }}" class="post-card reveal" data-category="{{ post.data.category | lower }}">
+      <div class="card-img">{{ post.data.category | upper }} · IMAGE</div>
+      <div class="card-body">
+        <div class="card-meta">
+          <span class="category-tag">{{ post.data.category | upper }}</span>
+          <span class="read-time">{{ post.data.readTime }}</span>
+        </div>
+        <h3>{{ post.data.title }}</h3>
+        <p class="card-excerpt">{{ post.data.excerpt }}</p>
+        <div class="card-footer">
+          <span>{{ post.date | thaiDate }}</span>
+          <span>{{ post.data.readTime }} read</span>
+        </div>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<footer class="footer">
+  <div class="footer-inner">
+    <span class="footer-logo">RYUOLOGY<span>/</span>JOURNAL</span>
+    <span class="footer-copy">© 2026 RYUOLOGY STUDIO · BANGKOK</span>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
