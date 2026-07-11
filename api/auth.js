@@ -5,9 +5,7 @@ export default function handler(req, res) {
     return;
   }
 
-  const proto = req.headers["x-forwarded-proto"] || "https";
-  const host = req.headers["x-forwarded-host"] || req.headers.host;
-  const redirectUri = `${proto}://${host}/api/callback`;
+  const redirectUri = "https://web-per.vercel.app/api/callback";
 
   const params = new URLSearchParams({
     client_id: clientId,
