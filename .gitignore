@@ -6,3 +6,7 @@ Screenshot*.png
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Build output & dependencies
+_site/
+node_modules/
