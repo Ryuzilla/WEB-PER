@@ -14,6 +14,7 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.addPassthroughCopy("blog/morning-routine-advanced.html");
   eleventyConfig.addPassthroughCopy("blog/search.html");
   eleventyConfig.addPassthroughCopy("admin");
+  eleventyConfig.addPassthroughCopy("images");
 
   // Filters
   eleventyConfig.addFilter("thaiDate", function (date) {
