@@ -505,6 +505,10 @@
         <div class="hero-stat-val up">+2.11%</div>
         <div class="hero-stat-label">BTC/USD</div>
       </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="gold-thb-val">—</div>
+        <div class="hero-stat-label">GOLD/THB <span style="font-size:.5rem;opacity:.6">บาทละ</span></div>
+      </div>
     </div>
   </div>
 </section>
@@ -776,6 +780,25 @@
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
   });
+
+  // Gold price in THB (per baht weight = 15.244g)
+  (async function fetchGoldTHB() {
+    try {
+      const el = document.getElementById('gold-thb-val');
+      const r = await fetch('https://query1.finance.yahoo.com/v8/finance/chart/XAUTHB=X?interval=1d&range=2d');
+      const d = await r.json();
+      const meta = d.chart.result[0].meta;
+      const pricePerOz = meta.regularMarketPrice;   // THB per troy oz
+      const prevClose  = meta.chartPreviousClose;
+      // 1 troy oz = 31.1035g, 1 บาทน้ำหนัก = 15.244g
+      const pricePerBaht = pricePerOz * (15.244 / 31.1035);
+      const pct = ((pricePerOz - prevClose) / prevClose * 100);
+      el.textContent = Math.round(pricePerBaht).toLocaleString('th-TH');
+      el.className = 'hero-stat-val ' + (pct >= 0 ? 'up' : 'down');
+    } catch(e) {
+      // silently keep "—" on CORS or network error
+    }
+  })();
 
   // TradingView Advanced Chart
   let widget;
